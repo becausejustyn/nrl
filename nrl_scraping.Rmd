@@ -1,0 +1,330 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+scraping nrl
+
+```{r}
+library(tidyverse)
+library(ggthemes)
+library(rvest)
+```
+
+```{r}
+raw_url <- "https://www.pro-football-reference.com/years/2020/opp.htm"
+
+raw_html <- read_html(raw_url)
+
+raw_table <- raw_html %>% 
+  html_table(fill = TRUE) %>% 
+  .[[2]] %>% 
+  janitor::clean_names() %>% 
+  tibble()
+```
+
+```{r}
+#team summary
+"https://www.foxsports.com.au/nrl/nrl-premiership/stats/teams"
+```
+
+
+```{r}
+raw_url_team_summary <- "https://www.foxsports.com.au/nrl/nrl-premiership/stats/teams"
+
+raw_html_team_summary <- read_html(raw_url_team_summary)
+
+raw_table_team_summary <- raw_html_team_summary %>% 
+  html_table(fill = TRUE) %>% 
+  .[[7]] %>% 
+  janitor::clean_names() %>% 
+  tibble()
+
+raw_table_team_summary
+```
+
+
+
+
+```{r}
+raw_url_team_attack <- "https://www.foxsports.com.au/nrl/nrl-premiership/stats/teams?editiondata=none&fromakamai=true&pt=none&device=DESKTOP&wpa=BB44D82C3D7223D393F2AE47579FB5EA6791ABE4&category=attack"
+
+raw_html_team_attack <- read_html(raw_url_team_attack)
+
+raw_table_team_attack <- raw_html_team_attack %>% 
+  html_table(fill = TRUE) %>% 
+  .[[7]] %>% 
+  janitor::clean_names() %>% 
+  tibble()
+
+raw_table_team_attack
+```
+
+```{r}
+raw_url_team_kicking <-"https://www.foxsports.com.au/nrl/nrl-premiership/stats/teams?editiondata=none&fromakamai=true&pt=none&device=DESKTOP&wpa=BB44D82C3D7223D393F2AE47579FB5EA6791ABE4&category=kicking"
+
+raw_html_team_kicking <- read_html(raw_url_team_kicking)
+
+raw_table_team_kicking <- raw_html_team_kicking %>% 
+  html_table(fill = TRUE) %>% 
+  .[[7]] %>% 
+  janitor::clean_names() %>% 
+  tibble()
+
+raw_table_team_kicking
+```
+
+```{r}
+raw_url_team_d <-"https://www.foxsports.com.au/nrl/nrl-premiership/stats/teams?editiondata=none&fromakamai=true&pt=none&device=DESKTOP&wpa=BB44D82C3D7223D393F2AE47579FB5EA6791ABE4&category=defenceAndDiscipline"
+
+raw_html_team_d <- read_html(raw_url_team_d)
+
+raw_table_team_d <- raw_html_team_d %>% 
+  html_table(fill = TRUE) %>% 
+  .[[7]] %>% 
+  janitor::clean_names() %>% 
+  tibble()
+
+raw_table_team_d
+```
+
+```{r}
+#players
+
+raw_url_players_summary <-"https://www.foxsports.com.au/nrl/nrl-premiership/stats/players"
+
+raw_html_players_summary <- read_html(raw_url_players_summary)
+
+raw_table_players_summary <- raw_html_players_summary %>% 
+  html_table(fill = TRUE) %>% 
+  .[[7]] %>% 
+  janitor::clean_names() %>% 
+  tibble()
+
+raw_table_players_summary
+
+
+
+
+```
+
+
+```{r}
+#players
+pages <- 1:25
+urls <- paste0("https://www.foxsports.com.au/nrl/nrl-premiership/stats/players?pageNumber=", pages) #page urls
+
+raw_html_players_summary <- map(urls, read_html) #meta to scape
+list_of_tables <- map(raw_html_players_summary, html_table, fill = TRUE) #raw_html_players_summary
+
+please <- lapply(list_of_tables, '[[' , 7) #only keeping the .[[7]] like above, but because it;s fir 25
+
+#reduce to make it 1 df
+please3 <- please %>%
+  reduce(rbind)
+
+please3
+
+please4 <- please3 %>%
+  janitor::clean_names()
+
+please4
+
+please4 <- please4 %>%
+  mutate(name = gsub('[[:digit:]]+', '', name)) #removing number at the start
+
+library(stringr)
+
+please5 <- please4 %>%
+  mutate(
+    "club" = str_extract(name, "\\([^()]+\\)"), .after = name,
+         "name" = str_replace(name, "\\([^()]+\\)", "")
+    )
+
+#removing parentheses from club
+please5 <- please5 %>%
+  mutate("club" = gsub("[][()]", "", club))
+
+please5
+```
+
+
+```{r}
+#players attack
+raw_url_players_attack <- paste0("https://www.foxsports.com.au/nrl/nrl-premiership/stats/players?category=attack&pageNumber=1", pages)
+raw_html_players_attack <- map(raw_url_players_attack, read_html) 
+raw_table_players_attack <- map(raw_html_players_attack, html_table, fill = TRUE) 
+players_attack_df <- lapply(raw_table_players_attack, '[[' , 7)
+
+players_attack_df <- players_attack_df %>%
+  reduce(rbind)
+
+players_attack_df <- players_attack_df %>%
+  janitor::clean_names() %>%
+  mutate(name = gsub('[[:digit:]]+', '', name)) #removing number at the start
+
+players_attack_df <- players_attack_df %>%
+  mutate(
+    "club" = str_extract(name, "\\([^()]+\\)"), .after = name,
+         "name" = str_replace(name, "\\([^()]+\\)", "")
+    )
+
+players_attack_df <- players_attack_df %>%
+  mutate("club" = gsub("[][()]", "", club))
+
+players_attack_df
+```
+
+
+```{r}
+#### players running
+raw_url_players_running_players_running <- paste0("https://www.foxsports.com.au/nrl/nrl-premiership/stats/players?category=running&pageNumber=1", pages)
+raw_html_players_running <- map(raw_url_players_running_players_running, read_html) 
+raw_table_players_running <- map(raw_html_players_running, html_table, fill = TRUE) 
+players_running_df <- lapply(raw_table_players_running, '[[' , 7)
+
+players_running_df <- players_running_df %>%
+  reduce(rbind)
+
+players_running_df <- players_running_df %>%
+  janitor::clean_names() %>%
+  mutate(name = gsub('[[:digit:]]+', '', name)) #removing number at the start
+
+players_running_df <- players_running_df %>%
+  mutate(
+    "club" = str_extract(name, "\\([^()]+\\)"), .after = name,
+         "name" = str_replace(name, "\\([^()]+\\)", "")
+    )
+
+players_running_df <- players_running_df %>%
+  mutate("club" = gsub("[][()]", "", club))
+
+players_running_df
+```
+
+```{r}
+### players kicking
+raw_url_players_kicking_players_kicking <- paste0("https://www.foxsports.com.au/nrl/nrl-premiership/stats/players?category=kicking&pageNumber=1", pages)
+raw_html_players_kicking <- map(raw_url_players_kicking_players_kicking, read_html) 
+raw_table_players_kicking <- map(raw_html_players_kicking, html_table, fill = TRUE) 
+players_kicking_df <- lapply(raw_table_players_kicking, '[[' , 7)
+
+players_kicking_df <- players_kicking_df %>%
+  reduce(rbind)
+
+players_kicking_df <- players_kicking_df %>%
+  janitor::clean_names() %>%
+  mutate(name = gsub('[[:digit:]]+', '', name)) #removing number at the start
+
+players_kicking_df <- players_kicking_df %>%
+  mutate(
+    "club" = str_extract(name, "\\([^()]+\\)"), .after = name,
+         "name" = str_replace(name, "\\([^()]+\\)", "")
+    )
+
+players_kicking_df <- players_kicking_df %>%
+  mutate("club" = gsub("[][()]", "", club))
+
+players_kicking_df
+```
+
+```{r}
+### players d
+raw_url_players_d <- paste0("https://www.foxsports.com.au/nrl/nrl-premiership/stats/players?category=defence&pageNumber=1", pages)
+raw_html_players_d <- map(raw_url_players_d, read_html) 
+raw_table_players_d <- map(raw_html_players_d, html_table, fill = TRUE)
+players_d_df <- lapply(raw_table_players_d, '[[' , 7)
+
+players_d_df <- players_d_df %>%
+  reduce(rbind)
+
+players_d_df <- players_d_df %>%
+  janitor::clean_names() %>%
+  mutate(name = gsub('[[:digit:]]+', '', name)) #removing number at the start
+
+players_d_df <- players_d_df %>%
+  mutate(
+    "club" = str_extract(name, "\\([^()]+\\)"), .after = name,
+         "name" = str_replace(name, "\\([^()]+\\)", "")
+    )
+
+players_d_df <- players_d_df %>%
+  mutate("club" = gsub("[][()]", "", club))
+
+players_d_df
+```
+
+
+
+
+```{r}
+head(please3)
+```
+
+```{r}
+scraping_function <- function()
+
+
+my_summarise <- function(data, name, club) {
+  data %>%
+    janitor::clean_names() %>%
+    mutate(
+      "{{ name }}" := gsub('[[:digit:]]+', '', {{ name }}),
+      "{{ club }}" := str_extract({{ name }}, "\\([^()]+\\)"), .after = {{ name }},
+      "{{ name }}" := str_replace({{ name }}, "\\([^()]+\\)", ""),
+      "{{ club }}" := gsub("[][()]", "", {{ club }})
+      )
+}
+
+
+
+```
+
+```{r}
+attempt1 <- my_summarise(please3, name, club)
+
+attempt1
+```
+
+```{r}
+attempt1 <- attempt1 %>% #fixing up the names
+  rename_with(~ newnames[which(names(attempt1) == .x)], .cols = names(attempt1))
+
+newnames <- c("name",  "club",  "games",  "starts",  "minutes",  "try",  "try_assist",  "goals",  "goal_kick_percent",  "field_goals",  "points",  "runs",  "run_metres",  "line_break",  "tackle_burst",  "offloads",  "kicks",  "kick_metres",  "tackle",  "missed_tackle",  "error",  "penalty",  "sin_bin",  "send_off")
+
+attempt1 <- attempt1 %>% #removing - from columns
+  mutate(across(.cols = everything(), str_replace, "-", "0"))
+```
+
+
+
+```{r}
+this_one <- function(url) {
+  raw_html <- read_html(url)
+  raw_table <- raw_html %>%
+    html_table(fill = TRUE) %>% 
+  .[[7]] %>% 
+  janitor::clean_names() %>% 
+  tibble()
+}
+
+
+raw_table_team_d <- raw_html_team_d %>% 
+  html_table(fill = TRUE) %>% 
+  .[[7]] %>% 
+  janitor::clean_names() %>% 
+  tibble()
+```
+
+
+```{r}
+oooft <- this_one("https://www.foxsports.com.au/nrl/nrl-premiership/stats/teams")
+```
+
+
+
+
+
+
+
+
