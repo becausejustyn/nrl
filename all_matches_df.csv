@@ -1,0 +1,17 @@
+Matchcode,HomeTeamName,AwayTeamName,HomeTeamScore,AwayTeamScore,Tries_HT,Tries_AT,Conversions_HT,Conversions_AT,PenaltyGoals_HT,PenaltyGoals_AT,FieldGoals_HT,FieldGoals_AT,SinBin_HT,SinBin_AT,Final_Scoreline_Margin
+0101,Eels,Bulldogs,8.0,2.0,1,0,1.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0,6.0
+0102,Raiders,Titans,24.0,6.0,4,1,4.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,18.0
+0103,Cowboys,Broncos,21.0,28.0,4,5,2.0,4.0,0.0,0.0,1.0,0.0,0.0,0.0,7.0
+0104,Knights,Warriors,20.0,0.0,3,0,2.0,0.0,2.0,0.0,0.0,0.0,0.0,1.0,20.0
+0105,Rabbitohs,Sharks,22.0,18.0,3,3,3.0,2.0,2.0,1.0,0.0,0.0,1.0,0.0,4.0
+0106,Panthers,Roosters,20.0,14.0,3,2,3.0,1.0,1.0,2.0,0.0,0.0,0.0,0.0,6.0
+0107,Sea Eagles,Storm,4.0,18.0,0,3,0.0,2.0,2.0,1.0,0.0,0.0,0.0,0.0,14.0
+0108,Dragons,Tigers,14.0,24.0,2,4,2.0,3.0,1.0,1.0,0.0,0.0,0.0,0.0,10.0
+0201,Bulldogs,Cowboys,16.0,24.0,3,4,2.0,3.0,0.0,1.0,0.0,0.0,1.0,0.0,8.0
+0202,Dragons,Panthers,28.0,32.0,5,5,4.0,5.0,0.0,1.0,0.0,0.0,0.0,0.0,4.0
+0203,Broncos,Rabbitohs,22.0,18.0,4,3,2.0,2.0,1.0,1.0,0.0,0.0,0.0,0.0,4.0
+0204,Warriors,Raiders,6.0,20.0,1,4,1.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0,14.0
+0205,Roosters,Sea Eagles,8.0,9.0,1,1,0.0,0.0,2.0,2.0,0.0,1.0,0.0,0.0,1.0
+0206,Sharks,Storm,10.0,12.0,1,1,1.0,1.0,2.0,3.0,0.0,0.0,0.0,0.0,2.0
+0207,Tigers,Knights,24.0,42.0,4,8,4.0,4.0,0.0,1.0,0.0,0.0,0.0,0.0,18.0
+0208,Titans,Eels,6.0,46.0,1,7,0.0,7.0,1.0,2.0,0.0,0.0,0.0,0.0,40.0
